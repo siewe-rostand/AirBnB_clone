@@ -25,7 +25,7 @@ class BaseModel:
             self.updated_at = datetime.now()
             storage.new(self)
         else:
-            _format = '%Y-%m-%d%T%H:%M:%S.%f'
+            _f = '%Y-%m-%d%T%H:%M:%S.%f'
             kwargs['created_at'] = datetime.strptime(kwargs['created_at'], _f)
             kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'], _f)
 
