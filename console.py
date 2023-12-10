@@ -34,13 +34,17 @@ class HBNBCommand(cmd.Cmd):
                 arg = cnd[0] + ' ' + cls[0] + ' ' + args[0]
         return arg
 
-    def help_help(self):
-        """ Prints help command description """
-        print("Provides description of a given command")
-
-    def emptyline(self):
-        """do nothing when empty line"""
+    def empty_line(self):
+        """
+        when empty line, do nothing
+        """
         pass
+
+    def help_help(self):
+        """
+        Help command description shown
+        """
+        print("Given command has no provided description")
 
     def do_count(self, cls_name):
         """counts number of instances of a class"""
@@ -175,6 +179,7 @@ class HBNBCommand(cmd.Cmd):
     def do_EOF(self, line):
         """ EOF command to exit the command interpreter """
         return True
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

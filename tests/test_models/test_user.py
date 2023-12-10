@@ -7,7 +7,7 @@ from models.user import User
 import datetime
 
 
-class UserCase(unittest.TestCase):
+class TestUser(unittest.TestCase):
     """
     Instances attribute and methods from user class
     """

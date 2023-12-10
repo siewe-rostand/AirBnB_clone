@@ -15,40 +15,61 @@ import datetime
 class test_basemodel(unittest.TestCase):
     """ class to test the base model attributes and method """
 
-    my_model = BaseModel()
+    @classmethod
+    def setUpClass(clss):
+        """
+        Open test environment
+        """
+        cls.base_model = BaseModel()
+        try:
+            os.rename("file.json", "test_file.json")
+        except Exception:
+            pass
 
-    def testBaseModel1(self):
-        """ Test attributes value of a BaseModel instance """
+    @classmethod
+    def tearDownClass(clss):
+        """
+        Close test environment
+        """
+        try:
+            os.remove("file.json")
+            os.rename("test_file.json", "file.json")
+        except Exception:
+            pass
 
-        self.my_model.name = "My First Model"
-        self.my_model.my_number = 89
-        self.my_model.save()
-        my_model_json = self.my_model.to_dict()
+    def test_save_method(self):
+        """
+        Checks if save method updates the public instance instance
+        attribute updated_at
+        """
 
-        self.assertEqual(self.my_model.name, my_model_json['name'])
-        self.assertEqual(self.my_model.my_number, my_model_json['my_number'])
-        self.assertEqual('BaseModel', my_model_json['__class__'])
-        self.assertEqual(self.my_model.id, my_model_json['id'])
+        prev_date = self.base_model.updated_at
+        self.base_model.save()
+        self.assertGreater(self.base_model.updated_at, prev_date)
+        self.assertTrue(os.path.exists("file.json"))
 
-    def testSave(self):
-        """ Checks if save method updates the public instance instance
-        attribute updated_at """
-        self.my_model.first_name = "First"
-        self.my_model.save()
+    def str_method_test(self):
+        """
+        tostring test
+        """
 
-        self.assertIsInstance(self.my_model.id, str)
-        self.assertIsInstance(self.my_model.created_at, datetime.datetime)
-        self.assertIsInstance(self.my_model.updated_at, datetime.datetime)
+        clss_name = str(self.base_model.__class__.__name__)
+        obj_dict = str(self.base_model.__dict__)
+        obj_str = f"[{cls_name}] ({self.base_model.id}) {obj_dict}"
+        self.assertEqual(obj_str, self.base_model.__str__())
 
-        f_dict = self.my_model.to_dict()
+    def to_dict_test(self):
+        """
+        to_dict method test
+        """
 
-        self.my_model.first_name = "Second"
-        self.my_model.save()
-        sec_dict = self.my_model.to_dict()
-
-        self.assertEqual(f_dict['created_at'], sec_dict['created_at'])
-        self.assertNotEqual(f_dict['updated_at'], sec_dict['updated_at'])
-
+        dct = {
+            "id": self.base_model.id,
+            "__class__": self.base_model.__class__.__name__,
+            "created_at": self.base_model.created_at.isoformat(),
+            "updated_at": self.base_model.updated_at.isoformat()
+        }
+        self.assertDictEqual(dct, self.base_model.to_dict())
 
 if __name__ == '__main__':
     unittest.main()

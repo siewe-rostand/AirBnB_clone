@@ -11,7 +11,7 @@ class FileStorage:
 
     def all(self):
         """Returns a dictionary of models currently in storage"""
-        return FileStorage.__objects
+        return self.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -34,16 +34,18 @@ class FileStorage:
         file exists
         """
         from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.city import City
+        from models.amenity import Amenity
+        from models.state import State
+        from models.review import Review
 
-        dct = {
-                    'BaseModel': BaseModel
-                  }
-        
-        try:
+        dct = {'BaseModel': BaseModel, 'User': User, 'Place': Place,
+               'City': City, 'Amenity': Amenity, 'State': State,
+               'Review': Review}
+
+        if os.path.exists(self.__file_path) is True:
             with open(self.__file_path, 'r') as f:
-                dct = json.loads(f.read())
-                for value in dct.values():
-                    cls = value["__class__"]
-                    self.new(eval(cls)(**value))
-        except Exception:
-            pass
+                for k, v in json.load(f).items():
+                    self.new(dct[v['__class__']](**v))
