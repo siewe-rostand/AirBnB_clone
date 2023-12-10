@@ -1,60 +1,49 @@
 #!/usr/bin/python3
-
-"""
-Class that store and serializes instances to a JSON file
-and deserializes JSON file to instances
-"""
+"""This module defines a class to manage file storage for hbnb clone"""
+import json
+import os
 
 
 class FileStorage:
-    """
-    class to manage stored json objects (model)
-    """
-
+    """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
     __objects = {}
 
     def all(self):
-        """
-        return the dictionary objects
-        """
-
+        """Returns a dictionary of models currently in storage"""
         return FileStorage.__objects
 
     def new(self, obj):
-        """
-        sets in __objects the obj with key class id
-        """
-
-        key = obj.__class__.name + '.' + + obj.id
-        FileStorage.__objects[key] = obj
+        """Adds new object to storage dictionary"""
+        key = obj.__class__.__name__ + "." + obj.id
+        self.__objects[key] = obj
 
     def save(self):
         """
-        serializes __objects to the JSON file (path: __file_path)
+        serializes __objects to the JSON file
         """
-        _dict = {}
 
-        for k, v in FileStorage.__objects.items():
-            _dict[k] = v.to_dict()
+        with open(self.__file_path, 'w', encoding="utf-8") as f:
+            _dct = {k: v.to_dict() for k, v in self.__objects.items()}
+            json.dump(_dct, f)
 
-        with open(FileStorage.__file_path, 'W') as f:
-            json.dump(_dict, f)
 
     def reload(self):
         """
-        method to deserializes the JSON file to __objects
+        deserializes the JSON file to __objects, if the JSON
+        file exists
         """
-
         from models.base_model import BaseModel
 
-        dic = {'BaseModel': BaseModel}
-
+        dct = {
+                    'BaseModel': BaseModel
+                  }
+        
         try:
-            tmp = {}
-            with open(FileStorage.__file_path, 'r') as f:
-                tmp = json.load(f)
-                for k, v in tmp.items():
-                    self.all()[k] = dic[v['__class__']](**v)
-        except FileNotFoundError:
+            with open(self.__file_path, 'r') as f:
+                dct = json.loads(f.read())
+                for value in dct.values():
+                    cls = value["__class__"]
+                    self.new(eval(cls)(**value))
+        except Exception:
             pass

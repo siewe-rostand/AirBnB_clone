@@ -26,11 +26,14 @@ class BaseModel:
             storage.new(self)
         else:
             _f = '%Y-%m-%d%T%H:%M:%S.%f'
-            kwargs['created_at'] = datetime.strptime(kwargs['created_at'], _f)
-            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'], _f)
-
-            del kwargs['__class__']
-            self.__dict__.update(kwargs)
+            for key, value in kwargs.items():
+                if key in ("updated_at", "created_at"):
+                    self.__dict__[key] = datetime.strptime(
+                        value, _f)
+                elif key[0] == "id":
+                    self.__dict__[key] = str(value)
+                else:
+                    self.__dict__[key] = value
 
     def __str__(self):
         """
@@ -56,12 +59,9 @@ class BaseModel:
 
         for k, v in self.__dict__.items():
             if k == "created_at" or k == "updated_at":
-                new_dictionary[k] = v.strftime("%Y-%m-%dT%H:%M:%S.%f")
+                new_dictionary[k] = v.isoformat()
             else:
-                if not v:
-                    pass
-                else:
-                    new_dictionary[k] = v
+                new_dictionary[k] = v
         new_dictionary["__class__"] = self.__class__.__name__
 
         return new_dictionary
