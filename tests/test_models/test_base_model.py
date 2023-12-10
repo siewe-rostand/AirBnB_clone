@@ -5,14 +5,14 @@ base model class for Unittests
 
 
 import unittest
-from models.base_model import BaseModel
 import os
 from models import storage
+from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
 import datetime
 
 
-class TestBaseModel(unittest.TestCase):
+class test_basemodel(unittest.TestCase):
     """ class to test the base model attributes and method """
 
     my_model = BaseModel()
