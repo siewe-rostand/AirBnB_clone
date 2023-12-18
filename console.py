@@ -41,13 +41,13 @@ class HBNBCommand(cmd.Cmd):
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
-        _cmd = _cls = _id = _args = ''  #  line elements initialization
+        _cmd = _cls = _id = _args = ''  # line elements initialization
 
         # general formating scan - i.e '.', '(', ')'
         if not ('.' in line and '(' in line and ')' in line):
             return line
 
-        try:  #  line from left to right parsing
+        try:  # line from left to right parsing
             parse_line = line[:]  # parsed line defintion
 
             _cls = parse_line[:parse_line.find('.')]  # isolate <class name>
@@ -58,16 +58,17 @@ class HBNBCommand(cmd.Cmd):
                 raise Exception
 
             # if parantheses contain arguments, parse them
-            parse_line = parse_line[parse_line.find('(') + 1:parse_line.find(')')]
+            parse_line =
+            parse_line[parse_line.find('(') + 1:parse_line.find(')')]
             if parse_line:
-                # partition args: (<id>, [<delim>], [<*args>])
-                parse_line = parse_line.partition(', ')  # parse_line convert to tuple
+                # parse_line convert to tuple
+                parse_line = parse_line.partition(', ')
 
                 # isolate _id, stripping quotes
                 _id = parse_line[0].replace('\"', '')
 
                 # if arguments exist beyond _id
-                parse_line = parse_line[2].strip()  # convert parse_line to string
+                parse_line = parse_line[2].strip()  # change parse_line to str
                 if parse_line:
                     #  *args or **kwargs checked
                     if parse_line[0] is '{' and parse_line[-1] is '}'\
@@ -110,13 +111,11 @@ class HBNBCommand(cmd.Cmd):
         """ emptyline method of CMD overridden """
         pass
 
-
     def help_create(self):
         """ create method documentation """
         print("Creates a class of any type")
         print("[Usage]: create <className>\n")
 
-        
     def do_create(self, args):
         """ Class object creation for any class"""
         if not args:
