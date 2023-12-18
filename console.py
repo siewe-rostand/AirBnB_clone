@@ -41,44 +41,41 @@ class HBNBCommand(cmd.Cmd):
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
-        _cmd = _cls = _id = _args = ''  # initialize line elements
+        _cmd = _cls = _id = _args = ''  #  line elements initialization
 
-        # scan for general formating - i.e '.', '(', ')'
+        # general formating scan - i.e '.', '(', ')'
         if not ('.' in line and '(' in line and ')' in line):
             return line
 
-        try:  # parse line left to right
-            pline = line[:]  # parsed line
+        try:  #  line from left to right parsing
+            parse_line = line[:]  # parsed line defintion
 
-            # isolate <class name>
-            _cls = pline[:pline.find('.')]
+            _cls = parse_line[:parse_line.find('.')]  # isolate <class name>
 
             # isolate and validate <command>
-            _cmd = pline[pline.find('.') + 1:pline.find('(')]
+            _cmd = parse_line[parse_line.find('.') + 1:parse_line.find('(')]
             if _cmd not in HBNBCommand.dot_cmds:
                 raise Exception
 
             # if parantheses contain arguments, parse them
-            pline = pline[pline.find('(') + 1:pline.find(')')]
-            if pline:
+            parse_line = parse_line[parse_line.find('(') + 1:parse_line.find(')')]
+            if parse_line:
                 # partition args: (<id>, [<delim>], [<*args>])
-                pline = pline.partition(', ')  # pline convert to tuple
+                parse_line = parse_line.partition(', ')  # parse_line convert to tuple
 
                 # isolate _id, stripping quotes
-                _id = pline[0].replace('\"', '')
-                # possible bug here:
-                # empty quotes register as empty _id when replaced
+                _id = parse_line[0].replace('\"', '')
 
                 # if arguments exist beyond _id
-                pline = pline[2].strip()  # pline is now str
-                if pline:
-                    # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is '}'\
-                            and type(eval(pline)) is dict:
-                        _args = pline
+                parse_line = parse_line[2].strip()  # convert parse_line to string
+                if parse_line:
+                    #  *args or **kwargs checked
+                    if parse_line[0] is '{' and parse_line[-1] is '}'\
+                            and type(eval(parse_line)) is dict:
+                        _args = parse_line
                     else:
-                        _args = pline.replace(',', '')
-                        # _args = _args.replace('\"', '')
+                        _args = parse_line.replace(',', '')
+                        #  _args.replace('\"', '') which is equal to _args
             line = ' '.join([_cmd, _cls, _id, _args])
 
         except Exception as mess:
@@ -97,24 +94,31 @@ class HBNBCommand(cmd.Cmd):
         exit()
 
     def help_quit(self):
-        """ Prints the help documentation for quit  """
-        print("Exits the program with formatting\n")
+        """ help documentation for quitting  """
+        print("Quit the program\n")
 
     def do_EOF(self, arg):
-        """ Handles EOF to exit program """
+        """ EOF handling (ctrl + d) to exit program """
         print()
         exit()
 
     def help_EOF(self):
-        """ Prints the help documentation for EOF """
-        print("Exits the program without formatting\n")
+        """ EOF documentation printing """
+        print("Quit the program\n")
 
     def emptyline(self):
-        """ Overrides the emptyline method of CMD """
+        """ emptyline method of CMD overridden """
         pass
 
+
+    def help_create(self):
+        """ create method documentation """
+        print("Creates a class of any type")
+        print("[Usage]: create <className>\n")
+
+        
     def do_create(self, args):
-        """ Create an object of any class"""
+        """ Class object creation for any class"""
         if not args:
             print("** class name missing **")
             return
@@ -125,11 +129,6 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
         print(new_instance.id)
         storage.save()
-
-    def help_create(self):
-        """ Help information for the create method """
-        print("Creates a class of any type")
-        print("[Usage]: create <className>\n")
 
     def do_show(self, args):
         """ Method to show an individual object """
