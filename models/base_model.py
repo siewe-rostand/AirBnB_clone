@@ -1,63 +1,44 @@
 #!/usr/bin/python3
-
-"""
-this is the base class to be inherited by other classes
-"""
-
+"""This module defines a base class for all models in our hbnb clone"""
 import uuid
 from datetime import datetime
-from models import storage
 
 
 class BaseModel:
-    """
-    All the class attributes and methods are defined here
-    """
-
+    """A base class for all hbnb models"""
     def __init__(self, *args, **kwargs):
-        """
-        attributes initialization
-        """
-
+        """Instatntiates a new model"""
         if not kwargs:
+            from models import storage
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             storage.new(self)
         else:
-            for key, value in kwargs.items():
-                if key in ("updated_at", "created_at"):
-                    self.__dict__[key] = datetime.strptime(
-                        value, "%Y-%m-%dT%H:%M:%S.%f")
-                elif key[0] == "id":
-                    self.__dict__[key] = str(value)
-                else:
-                    self.__dict__[key] = value
+            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
+                                                     '%Y-%m-%dT%H:%M:%S.%f')
+            kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
+                                                     '%Y-%m-%dT%H:%M:%S.%f')
+            del kwargs['__class__']
+            self.__dict__.update(kwargs)
 
     def __str__(self):
-        """
-        return the class name,id and dictionary attributes
-        """
-        class_name = "[" + self.__class__.__name__ + "]"
-        _dic = {k: v for (k, v) in self.__dict__.items() if (not v) is false}
-        return class_name + "(" + self.id + ")" + str(_dic)
+        """Returns a string representation of the instance"""
+        cls = (str(type(self)).split('.')[-1]).split('\'')[0]
+        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
 
     def save(self):
-        """
-        update the updated_at attribute to current time
-        """
-        self.update_at = datetime.now()
+        """Updates updated_at with current time when instance is changed"""
+        from models import storage
+        self.updated_at = datetime.now()
         storage.save()
 
     def to_dict(self):
-        """
-        return a new dictionary and datetimes as string
-        """
-
-        new_dictionary = self.__dict__.copy()
-
-        new_dictionary["__class__"] = self.__class__.__name__
-        new_dictionary["created_at"] = self.created_at.isoformat()
-        new_dictionary["updated_at"] = self.updated_at.isoformat()
-
-        return new_dictionary
+        """Convert instance into dict format"""
+        dictionary = {}
+        dictionary.update(self.__dict__)
+        dictionary.update({'__class__':
+                          (str(type(self)).split('.')[-1]).split('\'')[0]})
+        dictionary['created_at'] = self.created_at.isoformat()
+        dictionary['updated_at'] = self.updated_at.isoformat()
+        return dictionary
