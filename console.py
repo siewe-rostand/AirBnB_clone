@@ -111,11 +111,6 @@ class HBNBCommand(cmd.Cmd):
         """ emptyline method of CMD overridden """
         pass
 
-    def help_create(self):
-        """ create method documentation """
-        print("Creates a class of any type")
-        print("[Usage]: create <className>\n")
-
     def do_create(self, args):
         """ Class object creation for any class"""
         if not args:
@@ -128,6 +123,11 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
         print(new_instance.id)
         storage.save()
+
+    def help_create(self):
+        """ create method documentation """
+        print("Creates a class of any type")
+        print("[Usage]: create <className>\n")
 
     def do_show(self, args):
         """ Method to show an individual object """
