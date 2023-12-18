@@ -13,9 +13,11 @@ from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    """ Contains the functionality for the HBNB console"""
+    """ 
+    functionalities of the HBNB console
+    """
 
-    # determines prompt for interactive/non-interactive modes
+    # prompt for interactive/non-interactive modes
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
@@ -49,8 +51,9 @@ class HBNBCommand(cmd.Cmd):
 
         try:  # line from left to right parsing
             parse_line = line[:]  # parsed line defintion
-
-            _cls = parse_line[:parse_line.find('.')]  # isolate <class name>
+            
+            # isolate <class name>
+            _cls = parse_line[:parse_line.find('.')]
 
             # isolate and validate <command>
             _cmd = parse_line[parse_line.find('.') + 1:parse_line.find('(')]
